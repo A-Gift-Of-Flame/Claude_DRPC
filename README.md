@@ -43,16 +43,19 @@ That's it. The next section is optional.
 ### Better cost numbers (optional but recommended)
 
 By default, cost is *estimated* from a built-in pricing table (which drifts).
-Enable the statusline tier to show Claude's **own exact** model + cost by
-running the bundled setup script once. From the installed plugin directory:
+Enable the statusline tier to show Claude's **own exact** model + cost — just
+run the bundled command in Claude Code:
 
-```bash
-node scripts/setup-statusline.js
+```
+/drpc-statusline
 ```
 
 It backs up `~/.claude/settings.json` and points `statusLine` at the plugin;
 any existing statusline is preserved and still runs (wrapped via
 `CLAUDE_DRPC_WRAPPED`). Restart your sessions to apply.
+
+> Prefer doing it by hand? Run `node scripts/setup-statusline.js` from the
+> installed plugin directory — same effect.
 
 ### Use your own Discord app (advanced)
 
