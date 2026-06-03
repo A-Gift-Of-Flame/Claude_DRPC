@@ -54,8 +54,9 @@ and re-invoked via `CLAUDE_DRPC_WRAPPED`. Restart sessions to apply.
 
 1. **Create a Discord application** at <https://discord.com/developers/applications>.
    Copy the **Application ID** (Client ID).
-2. Under **Rich Presence → Art Assets**, upload an image and name its key
-   `claude` (or change `largeImage` in `config.json`).
+2. Under **Rich Presence → Art Assets**, upload an image (the bundled
+   `assets/icon.png` works) and name its key `claude` (or change `largeImage`
+   in `config.json`).
 3. Put the Client ID in `config.json`:
    ```json
    { "clientId": "123456789012345678", "largeImage": "claude" }
@@ -74,16 +75,35 @@ and re-invoked via `CLAUDE_DRPC_WRAPPED`. Restart sessions to apply.
 | `largeText` | hover text for big icon |
 | `smallImage` | optional small overlay icon key |
 | `idleExitMinutes` | daemon self-exits after this much inactivity (default 10) |
-| `debug` | write a log to `$TMPDIR/claude-drpc.log` |
+| `debug` | write a log to `~/.claude/drpc/daemon.log` |
+
+All runtime state lives under `~/.claude/drpc/` (`status.json`, `ended.json`,
+`daemon.lock`, `daemon.log`) — a fixed, env-stable location, never inside the
+repo.
 
 ## Notes / limits
 
 - One daemon serves all sessions; it always shows the **most recently active**
-  transcript. Pidfile (`$TMPDIR/claude-drpc.lock`) prevents duplicates.
-- No clean "session end" signal exists, so the daemon self-exits once
-  transcripts go stale (`idleExitMinutes`) and clears presence on the way out.
-- Linux/macOS socket discovery covers plain, snap, and flatpak Discord
-  installs. Windows named pipes are not handled yet.
+  transcript. A lock (`~/.claude/drpc/daemon.lock`) prevents duplicates.
+- **Clean exit** (`/exit`) stops presence immediately via a `SessionEnd` hook.
+  A **dirty kill** (closed terminal / `SIGHUP`) is caught within ~5s by a
+  liveness watchdog (`/proc` PID check, Linux only); on other platforms it
+  falls back to self-exit once transcripts go stale (`idleExitMinutes`).
+- Discord socket discovery covers Linux/macOS plain, snap, and flatpak
+  installs, plus Windows named pipes (`\\?\pipe\discord-ipc-N`).
+
+## Tested platforms
+
+Actively tested on **Debian 13 (Linux x86_64)** only. The code paths for
+macOS (unix sockets) and Windows (named pipes) exist but are **untested** —
+reports and fixes welcome. The dirty-kill liveness watchdog is Linux-only;
+other platforms degrade gracefully to the idle timeout.
+
+| platform | status |
+|----------|--------|
+| Linux x86_64 (Debian 13) | ✅ tested |
+| macOS | ⚠️ untested (should work) |
+| Windows | ⚠️ untested (should work) |
 
 ## Test manually
 
