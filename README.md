@@ -120,7 +120,7 @@ code paths exist but are **untested** — reports and fixes welcome.
 
 ---
 
-## How it works (and why it costs zero tokens)
+## How it works (and why the daemon costs zero tokens)
 
 Claude Code has no persistent "extension host" process you can write against.
 Its extension points are one-shot scripts (hooks) or context-injecting MCP
@@ -140,7 +140,13 @@ SessionStart hook ──► launcher.js (one-shot) ──► spawns daemon.js (d
 
 - The **hook** fires once per session, launches the daemon, and exits. Free.
 - The **daemon** runs *outside* Claude entirely. The model never sees it →
-  **zero token cost**.
+  **zero token cost** for the presence itself.
+
+The only thing the model ever sees is the optional `/drpc-statusline` command's
+one-line description (~55 tokens/session, loaded like any slash command). The
+actual presence — the daemon, the hooks, the IPC — adds nothing to your
+context. Don't want even that? Skip the command and run
+`scripts/setup-statusline.js` by hand instead.
 
 It reads two data sources:
 
