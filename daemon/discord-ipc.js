@@ -8,6 +8,12 @@ const { randomUUID } = require('crypto');
 const OP = { HANDSHAKE: 0, FRAME: 1, CLOSE: 2, PING: 3, PONG: 4 };
 
 function ipcCandidatePaths() {
+  // Windows: Discord exposes named pipes \\?\pipe\discord-ipc-N (no fs layout).
+  if (process.platform === 'win32') {
+    const out = [];
+    for (let i = 0; i < 10; i++) out.push(`\\\\?\\pipe\\discord-ipc-${i}`);
+    return out;
+  }
   const bases = [
     process.env.XDG_RUNTIME_DIR,
     process.env.TMPDIR,
@@ -41,7 +47,9 @@ class DiscordIPC {
       const tryNext = (i) => {
         if (i >= paths.length) return reject(new Error('no Discord IPC socket found'));
         const p = paths[i];
-        if (!fs.existsSync(p)) return tryNext(i + 1);
+        // Named pipes (win32) don't stat reliably; just attempt connect and
+        // let an 'error' advance to the next candidate.
+        if (process.platform !== 'win32' && !fs.existsSync(p)) return tryNext(i + 1);
         const sock = net.createConnection(p);
         sock.once('error', () => tryNext(i + 1));
         sock.once('connect', () => {
