@@ -1,10 +1,13 @@
 # claude-discord-rpc
 
 Discord Rich Presence for Claude Code (terminal **and** desktop). Shows your
-current project, git branch, and what Claude is doing right now.
+current project, git branch, current activity, **model, token count, cost,
+and session time** in Discord — live, while you work.
 
-Shows project, git branch, current activity, **model, token count, cost, and
-session time** in Discord.
+> **Unofficial / third-party project.** Not affiliated with, endorsed by, or
+> sponsored by Anthropic. "Claude" and "Claude Code" are trademarks of
+> Anthropic PBC, used here only to describe compatibility (nominative fair
+> use). Ships its own icon — not the Anthropic logo.
 
 ## How it works (and why it's free)
 
