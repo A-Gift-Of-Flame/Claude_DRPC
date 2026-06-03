@@ -171,13 +171,18 @@ function computeActivity() {
     ? tallyFromTranscript(entries)
     : { tokens: 0, cost: 0, lastModel: null };
 
-  // statusline tier wins for model + cost (Claude's exact numbers)
+  // statusline tier wins for model + cost (Claude's exact numbers) — but ONLY
+  // when it belongs to the SAME session as the active transcript. status.json is
+  // a single global file, overwritten by whichever session last rendered its
+  // statusline; a stale entry from another session would otherwise bleed the
+  // wrong project/model/cost into this session's presence.
   const status = readStatus();
-  const model = (status && status.model && status.model.display_name) || modelLabel(tally.lastModel);
-  const cost = (status && status.cost && typeof status.cost.total_cost_usd === 'number')
+  const statusMatch = status && status.session_id && status.session_id === sessionId;
+  const model = (statusMatch && status.model && status.model.display_name) || modelLabel(tally.lastModel);
+  const cost = (statusMatch && status.cost && typeof status.cost.total_cost_usd === 'number')
     ? status.cost.total_cost_usd
     : tally.cost;
-  if (status && status.workspace && status.workspace.current_dir) cwd = status.workspace.current_dir;
+  if (statusMatch && status.workspace && status.workspace.current_dir) cwd = status.workspace.current_dir;
 
   const project = cwd ? path.basename(cwd) : 'Claude Code';
   let activity;
