@@ -1,0 +1,14 @@
+{
+  "clientId": "1511532478492315821",
+  "largeImage": "claude",
+  "largeText": "Claude Code",
+  "smallImage": "",
+  "idleExitMinutes": 10,
+  "debug": false,
+  "_pricing_note": "USD per 1M tokens. Fallback ONLY when statusline tier is off; statusline gives Claude's exact cost. Approximate — verify against current Anthropic pricing.",
+  "pricing": {
+    "opus":   { "input": 15,  "output": 75, "cacheRead": 1.5,  "cacheWrite": 18.75 },
+    "sonnet": { "input": 3,   "output": 15, "cacheRead": 0.3,  "cacheWrite": 3.75 },
+    "haiku":  { "input": 0.8, "output": 4,  "cacheRead": 0.08, "cacheWrite": 1 }
+  }
+}

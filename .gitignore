@@ -1,0 +1,13 @@
+# local perms / personal Claude state
+.claude/settings.local.json
+
+# node
+node_modules/
+npm-debug.log*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# runtime state (lives in ~/.claude/drpc/, never in repo)
+*.log
