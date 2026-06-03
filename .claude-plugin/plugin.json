@@ -6,6 +6,5 @@
   "homepage": "https://github.com/A-Gift-Of-Flame/Claude_DRPC",
   "repository": "https://github.com/A-Gift-Of-Flame/Claude_DRPC",
   "license": "MIT",
-  "keywords": ["discord", "rich-presence", "claude-code", "status", "hooks"],
-  "hooks": "./hooks/hooks.json"
+  "keywords": ["discord", "rich-presence", "claude-code", "status", "hooks"]
 }
