@@ -13,7 +13,7 @@
       "name": "claude-discord-rpc",
       "source": "./",
       "description": "Discord Rich Presence for Claude Code. Passive transcript-watching daemon spawned by a SessionStart hook. Zero token cost — model never sees it.",
-      "version": "0.1.0",
+      "version": "0.1.1",
       "license": "MIT",
       "keywords": ["discord", "rich-presence", "claude-code", "status", "hooks"]
     }
