@@ -32,6 +32,7 @@ function log(...a) {
 // ---- model + formatting helpers ------------------------------------------
 function modelFamily(id) {
   if (!id) return null;
+  if (/fable/i.test(id)) return 'fable';
   if (/opus/i.test(id)) return 'opus';
   if (/sonnet/i.test(id)) return 'sonnet';
   if (/haiku/i.test(id)) return 'haiku';

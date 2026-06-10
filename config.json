@@ -7,8 +7,9 @@
   "debug": false,
   "_pricing_note": "USD per 1M tokens. Fallback ONLY when statusline tier is off; statusline gives Claude's exact cost. Approximate — verify against current Anthropic pricing.",
   "pricing": {
-    "opus":   { "input": 15,  "output": 75, "cacheRead": 1.5,  "cacheWrite": 18.75 },
+    "fable":  { "input": 10,  "output": 50, "cacheRead": 1,    "cacheWrite": 12.5 },
+    "opus":   { "input": 5,   "output": 25, "cacheRead": 0.5,  "cacheWrite": 6.25 },
     "sonnet": { "input": 3,   "output": 15, "cacheRead": 0.3,  "cacheWrite": 3.75 },
-    "haiku":  { "input": 0.8, "output": 4,  "cacheRead": 0.08, "cacheWrite": 1 }
+    "haiku":  { "input": 1,   "output": 5,  "cacheRead": 0.1,  "cacheWrite": 1.25 }
   }
 }
