@@ -192,7 +192,8 @@ function computeActivity() {
   else activity = 'Coding';
 
   const details = branch ? `${project} · ${branch}` : project;
-  const extras = [fmtTokens(tally.tokens), fmtCost(cost)].filter(Boolean).join(' · ');
+  // 'Claude' is the no-data fallback label — skip it rather than show a non-answer
+  const extras = [model !== 'Claude' ? model : '', fmtTokens(tally.tokens), fmtCost(cost)].filter(Boolean).join(' · ');
   const state = (extras ? `${activity} · ${extras}` : activity).slice(0, 128);
 
   const assets = {
