@@ -1,7 +1,7 @@
 {
   "name": "claude-discord-rpc",
   "description": "Discord Rich Presence for Claude Code. Passive transcript-watching daemon spawned by a SessionStart hook. Zero token cost — model never sees it.",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "author": { "name": "A Gift Of Flame" },
   "homepage": "https://github.com/A-Gift-Of-Flame/Claude_DRPC",
   "repository": "https://github.com/A-Gift-Of-Flame/Claude_DRPC",

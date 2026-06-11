@@ -48,7 +48,26 @@ function alive(pid) {
   try { process.kill(pid, 0); return true; } catch { return false; }
 }
 
-function start(sessionId) {
+// Lock format: "<pid>\n<daemon script path>". Older daemons wrote the pid only;
+// parseInt tolerates both, and a missing script line reads as unknown version.
+function readLock() {
+  try {
+    const [pidLine, script] = fs.readFileSync(LOCK, 'utf8').split('\n');
+    return { pid: parseInt(pidLine, 10), script: script || null };
+  } catch { return null; }
+}
+
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+async function waitGone(pid, ms) {
+  const deadline = Date.now() + ms;
+  while (Date.now() < deadline) {
+    if (!alive(pid)) return true;
+    await sleep(100);
+  }
+  return !alive(pid);
+}
+
+async function start(sessionId) {
   // New session starting → drop any stale end marker so it isn't suppressed.
   try { fs.unlinkSync(ENDED_FILE); } catch {}
 
@@ -61,10 +80,19 @@ function start(sessionId) {
     }
   } catch {}
 
-  // Already running? bail.
-  if (fs.existsSync(LOCK)) {
-    const pid = parseInt(fs.readFileSync(LOCK, 'utf8').trim(), 10);
-    if (alive(pid)) process.exit(0);
+  // Already running? Bail only if it's the same version as us — a daemon left
+  // over from before a plugin update would keep serving stale code forever
+  // (it survives across sessions), so kill it and start fresh.
+  const lock = readLock();
+  if (lock) {
+    if (alive(lock.pid)) {
+      if (lock.script === path.join(__dirname, 'daemon.js')) process.exit(0);
+      try { process.kill(lock.pid, 'SIGTERM'); } catch {}
+      if (!(await waitGone(lock.pid, 2000))) {
+        try { process.kill(lock.pid, 'SIGKILL'); } catch {}
+        await waitGone(lock.pid, 500);
+      }
+    }
     try { fs.unlinkSync(LOCK); } catch {}
   }
 

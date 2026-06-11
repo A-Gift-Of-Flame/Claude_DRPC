@@ -42,6 +42,13 @@ function modelLabel(id) {
   const f = modelFamily(id);
   return f ? f[0].toUpperCase() + f.slice(1) : (id || 'Claude');
 }
+// Card width is ~36 chars; full MCP names (mcp__server__tool) push tokens/cost
+// off the state line. Show just the tool part, capped.
+function toolLabel(name) {
+  let label = name.startsWith('mcp__') ? name.split('__').pop() : name;
+  if (label.length > 16) label = label.slice(0, 15) + '…';
+  return label;
+}
 function fmtTokens(n) {
   if (!n) return '';
   if (n >= 1e6) return (n / 1e6).toFixed(1) + 'M tok';
@@ -187,7 +194,7 @@ function computeActivity() {
 
   const project = cwd ? path.basename(cwd) : 'Claude Code';
   let activity;
-  if (lastType === 'assistant' && lastTool) activity = `Using ${lastTool}`;
+  if (lastType === 'assistant' && lastTool) activity = `Using ${toolLabel(lastTool)}`;
   else if (lastType === 'user') activity = 'Thinking…';
   else activity = 'Coding';
 
@@ -249,7 +256,9 @@ if (!CLIENT_ID || CLIENT_ID === 'YOUR_DISCORD_APP_CLIENT_ID') {
 }
 
 fs.mkdirSync(STATE_DIR, { recursive: true });
-fs.writeFileSync(LOCK, String(process.pid));
+// pid + own script path; the launcher compares the path to detect (and replace)
+// a daemon left running from a previous plugin version.
+fs.writeFileSync(LOCK, process.pid + '\n' + __filename);
 process.on('SIGTERM', shutdown);
 process.on('SIGINT', shutdown);
 process.on('exit', releaseLock);
